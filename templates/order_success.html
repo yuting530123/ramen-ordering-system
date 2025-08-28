@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>訂單成功</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🍜 訂單成功！</h1>
+    <p>您點選的口味：<strong>{{ flavor }}</strong></p>
+    <p>加料：<strong>{{ ', '.join(toppings) if toppings else '無' }}</strong></p>
+    <p>總金額：<strong>{{ total }} 元</strong></p>
+    <a href="/">返回首頁</a>
+</body>
+</html>

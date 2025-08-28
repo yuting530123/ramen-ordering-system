@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>拉麵點餐</title>
+  <!-- 連結 CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- 連結 JS -->
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+  <h1>歡迎光臨拉麵店！</h1>
+
+  <!-- 表單開始 -->
+  <form action="/order" method="post">
+    <label for="flavor">選擇口味:</label>
+    <select name="flavor" id="flavor" required>
+      <option value="豚骨">豚骨</option>
+      <option value="味噌">味噌</option>
+      <option value="鹽味">鹽味</option>
+    </select>
+
+    <label for="topping">加料:</label>
+    <select name="topping" id="topping" required>
+      <option value="叉燒">叉燒</option>
+      <option value="溏心蛋">溏心蛋</option>
+      <option value="加麵">加麵</option>
+    </select>
+
+    <label for="noodle">麵條粗細:</label>
+    <select name="noodle" id="noodle" required>
+      <option value="細麵">細麵</option>
+      <option value="中等">中等</option>
+      <option value="粗麵">粗麵</option>
+    </select>
+
+    <br><br>
+    <button type="submit">送出訂單</button>
+  </form>
+  <!-- 表單結束 -->
+
+</body>
+</html>
