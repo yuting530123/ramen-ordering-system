@@ -10,7 +10,14 @@
 </head>
 <body>
   <h1>歡迎光臨拉麵店！</h1>
-
+  <h4>豚骨口味$180</h4>
+  <h4>味噌口味$170</h4>
+  <h4>鹽味口味$160</h4>
+  <h5>+叉燒$30</h5>
+  <h5>+溏心蛋$15</h5>
+  <h5>+麵$20</h5>
+  
+  
   <!-- 表單開始 -->
   <form action="/order" method="post">
     <label for="flavor">選擇口味:</label>
@@ -18,14 +25,14 @@
       <option value="豚骨">豚骨</option>
       <option value="味噌">味噌</option>
       <option value="鹽味">鹽味</option>
-    </select>
+    </select><\br>
 
     <label for="topping">加料:</label>
     <select name="topping" id="topping" required>
       <option value="叉燒">叉燒</option>
       <option value="溏心蛋">溏心蛋</option>
       <option value="加麵">加麵</option>
-    </select>
+    </select><\br>
 
     <label for="noodle">麵條粗細:</label>
     <select name="noodle" id="noodle" required>
@@ -41,3 +48,4 @@
 
 </body>
 </html>
+
