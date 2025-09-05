@@ -52,10 +52,16 @@ def init_db():
         print(f"❌ 資料庫初始化失敗: {e}")
 
 
-# 👉 新增：在第一次請求前，確保資料表已經建立
-@app.before_first_request
+# 👉 Flask 3.0 之後用 before_request 搭配 flag
+initialized = False
+
+@app.before_request
 def initialize():
-    init_db()
+    global initialized
+    if not initialized:
+        init_db()
+        initialized = True
+
 
 
 @app.route('/')
@@ -174,3 +180,4 @@ def daily_stats():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
+
