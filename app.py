@@ -54,11 +54,8 @@ def index():
 @app.route('/order', methods=['POST'])
 def order():
     try:
-        print("🔍 開始處理訂單...")
-        
         flavor = request.form.get('flavor')
         toppings = request.form.getlist('topping')
-        print(f"🔍 收到訂單: 口味={flavor}, 配菜={toppings}")
         
         # 價格表
         flavor_price = {"豚骨": 180, "味噌": 170, "鹽味": 160}
@@ -68,16 +65,13 @@ def order():
         total = flavor_price.get(flavor, 0)
         for t in toppings:
             total += topping_price.get(t, 0)
-        print(f"🔍 計算金額: {total}元")
         
         order_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         # 存入 PostgreSQL 資料庫
-        print("🔍 準備連接資料庫...")
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        print("🔍 執行 INSERT 指令...")
         cursor.execute('''
             INSERT INTO orders (flavor, toppings, total_price, order_time)
             VALUES (%s, %s, %s, %s)
@@ -101,14 +95,9 @@ def order():
             order_time=order_time
         )
         
-    except pg8000.Error as db_error:
-        print(f"❌ 資料庫錯誤: {db_error}")
-        return f"資料庫錯誤: {str(db_error)}", 500
     except Exception as e:
-        print(f"❌ 一般錯誤: {e}")
-        import traceback
-        traceback.print_exc()
-        return f"訂單處理失敗: {str(e)}", 500
+        print(f"❌ 訂單處理失敗: {e}")
+        return "訂單處理失敗，請稍後再試", 500
 
 # 新增：查看所有訂單的功能 (可選)
 @app.route('/orders')
