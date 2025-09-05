@@ -13,7 +13,7 @@ def get_db_connection():
     # 方法1: 使用環境變數 (建議)
     DATABASE_URL = os.getenv('DATABASE_URL')
     if DATABASE_URL:
-        return psycopg2.connect(DATABASE_URL, sslmode='require')
+        return psycopg2.connect(DATABASE_URL)
     
     # 方法2: 直接填入 Render 給你的資料庫資訊
     return psycopg2.connect(
@@ -169,4 +169,5 @@ def daily_stats():
 if __name__ == '__main__':
     init_db()  # 啟動時初始化資料庫
     app.run(debug=True)
+
 
