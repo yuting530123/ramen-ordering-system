@@ -33,7 +33,6 @@ def init_db():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # 建立訂單表格 (PostgreSQL 語法)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS orders (
                 id SERIAL PRIMARY KEY,
@@ -51,6 +50,12 @@ def init_db():
 
     except Exception as e:
         print(f"❌ 資料庫初始化失敗: {e}")
+
+
+# 👉 新增：在第一次請求前，確保資料表已經建立
+@app.before_first_request
+def initialize():
+    init_db()
 
 
 @app.route('/')
@@ -75,7 +80,6 @@ def order():
 
         order_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # 存入 PostgreSQL 資料庫
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -85,7 +89,7 @@ def order():
             RETURNING id
         ''', (flavor, ", ".join(toppings), total, order_time))
 
-        order_id = cursor.fetchone()[0]  # 取得新訂單的 ID
+        order_id = cursor.fetchone()[0]
 
         conn.commit()
         cursor.close()
@@ -107,7 +111,6 @@ def order():
         return "訂單處理失敗，請稍後再試", 500
 
 
-# 查看所有訂單
 @app.route('/orders')
 def view_orders():
     try:
@@ -132,14 +135,12 @@ def view_orders():
         return "查詢失敗", 500
 
 
-# 今日銷售統計
 @app.route('/stats')
 def daily_stats():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # 今日訂單數量和總金額
         cursor.execute('''
             SELECT COUNT(*), COALESCE(SUM(total_price), 0)
             FROM orders 
@@ -147,7 +148,6 @@ def daily_stats():
         ''')
         count, total_sales = cursor.fetchone()
 
-        # 最受歡迎的口味
         cursor.execute('''
             SELECT flavor, COUNT(*) as count
             FROM orders 
@@ -173,5 +173,4 @@ def daily_stats():
 
 
 if __name__ == '__main__':
-    init_db()  # 啟動時初始化資料庫
     app.run(host="0.0.0.0", port=5000, debug=True)
