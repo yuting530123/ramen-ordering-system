@@ -1,6 +1,3 @@
-import psycopg2cffi.compat
-psycopg2cffi.compat.register() 
-
 from flask import Flask, render_template, request
 import psycopg2
 import os
@@ -13,10 +10,17 @@ def get_db_connection():
     # 方法1: 使用環境變數 (建議)
     DATABASE_URL = os.getenv('DATABASE_URL')
     if DATABASE_URL:
-        return psycopg2.connect(DATABASE_URL)
+        return psycopg2.connect(DATABASE_URL, sslmode='require')
     
-
-
+    # 方法2: 直接填入 Render 給你的資料庫資訊
+    return psycopg2.connect(
+        host="你的hostname.render.com",      # 替換成你的 hostname
+        database="你的資料庫名稱",              # 替換成你的資料庫名稱  
+        user="你的使用者名稱",                  # 替換成你的使用者名稱
+        password="你的密碼",                   # 替換成你的密碼
+        port="5432",
+        sslmode='require'  # Render 需要 SSL 連線
+    )
 
 # 建立資料庫表格
 def init_db():
@@ -50,8 +54,11 @@ def index():
 @app.route('/order', methods=['POST'])
 def order():
     try:
+        print("🔍 開始處理訂單...")
+        
         flavor = request.form.get('flavor')
         toppings = request.form.getlist('topping')
+        print(f"🔍 收到訂單: 口味={flavor}, 配菜={toppings}")
         
         # 價格表
         flavor_price = {"豚骨": 180, "味噌": 170, "鹽味": 160}
@@ -61,13 +68,16 @@ def order():
         total = flavor_price.get(flavor, 0)
         for t in toppings:
             total += topping_price.get(t, 0)
+        print(f"🔍 計算金額: {total}元")
         
         order_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         # 存入 PostgreSQL 資料庫
+        print("🔍 準備連接資料庫...")
         conn = get_db_connection()
         cursor = conn.cursor()
         
+        print("🔍 執行 INSERT 指令...")
         cursor.execute('''
             INSERT INTO orders (flavor, toppings, total_price, order_time)
             VALUES (%s, %s, %s, %s)
@@ -91,9 +101,14 @@ def order():
             order_time=order_time
         )
         
+    except pg8000.Error as db_error:
+        print(f"❌ 資料庫錯誤: {db_error}")
+        return f"資料庫錯誤: {str(db_error)}", 500
     except Exception as e:
-        print(f"❌ 訂單處理失敗: {e}")
-        return "訂單處理失敗，請稍後再試", 500
+        print(f"❌ 一般錯誤: {e}")
+        import traceback
+        traceback.print_exc()
+        return f"訂單處理失敗: {str(e)}", 500
 
 # 新增：查看所有訂單的功能 (可選)
 @app.route('/orders')
@@ -162,6 +177,3 @@ def daily_stats():
 if __name__ == '__main__':
     init_db()  # 啟動時初始化資料庫
     app.run(debug=True)
-
-
-
