@@ -15,15 +15,8 @@ def get_db_connection():
     if DATABASE_URL:
         return psycopg2.connect(DATABASE_URL)
     
-    # 方法2: 直接填入 Render 給你的資料庫資訊
-    return psycopg2.connect(
-        host="你的hostname.render.com",      # 替換成你的 hostname
-        database="你的資料庫名稱",              # 替換成你的資料庫名稱  
-        user="你的使用者名稱",                  # 替換成你的使用者名稱
-        password="你的密碼",                   # 替換成你的密碼
-        port="5432",
-        sslmode='require'  # Render 需要 SSL 連線
-    )
+
+
 
 # 建立資料庫表格
 def init_db():
@@ -169,5 +162,6 @@ def daily_stats():
 if __name__ == '__main__':
     init_db()  # 啟動時初始化資料庫
     app.run(debug=True)
+
 
 
