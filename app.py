@@ -1,3 +1,6 @@
+import psycopg2cffi.compat
+psycopg2cffi.compat.register() 
+
 from flask import Flask, render_template, request
 import psycopg2
 import os
@@ -166,3 +169,4 @@ def daily_stats():
 if __name__ == '__main__':
     init_db()  # 啟動時初始化資料庫
     app.run(debug=True)
+
